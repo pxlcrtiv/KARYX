@@ -38,7 +38,7 @@ def create_minimal_onnx(model_path: str):
     )
     
     # Create model
-    model = helper.make_model(graph, producer_name='edgeforge-test')
+    model = helper.make_model(graph, producer_name='karyx-test')
     
     onnx.save(model, model_path)
     print(f"Mock model saved to {model_path}")

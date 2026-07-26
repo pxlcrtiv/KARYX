@@ -6,7 +6,7 @@ Working notes for collaborative coding agents on this repo.
 
 ### Issue tracker
 
-GitHub Issues for `pxlcrtiv/EDGEFORGE`. See `docs/agents/issue-tracker.md`.
+GitHub Issues for `pxlcrtiv/KARYX`. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 

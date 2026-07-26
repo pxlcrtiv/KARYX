@@ -1,4 +1,4 @@
-# EDGEFORGE — Deepen the Audit Chain; Then the Pipeline
+# KARYX — Deepen the Audit Chain; Then the Pipeline
 
 Carried out of the architecture review on 2026-07-20. Two sequenced, blocking-edge tickets. Each is independently mergeable: the audit-chain fix lands first as a security boundary; the pipeline extraction lands second on top of it.
 
@@ -12,7 +12,7 @@ Vocabulary: **module · interface · implementation · depth · seam · adapter 
 
 ### Why this is first
 
-EDGEFORGE names "Cryptographic Audit Trail" in its project root. The chain produced today records full filesystem paths under the `input_hashes` key (see `pkg_4cc1c88b/security/audit_log.json:17` — `"input": "/private/tmp/pytest-of-admin/.../model.onnx"`). The chain-of-custody integrity holds across path *strings*. It does **not** establish that the artifact at that path was the one used. A test asserting `input_hashes[*]` values are 64-hex SHA-256 strings would currently fail.
+KARYX names "Cryptographic Audit Trail" in its project root. The chain produced today records full filesystem paths under the `input_hashes` key (see `pkg_4cc1c88b/security/audit_log.json:17` — `"input": "/private/tmp/pytest-of-admin/.../model.onnx"`). The chain-of-custody integrity holds across path *strings*. It does **not** establish that the artifact at that path was the one used. A test asserting `input_hashes[*]` values are 64-hex SHA-256 strings would currently fail.
 
 The audit module is fine underneath; the seam around it is wrong. The seam is where to deepen — the implementation already chains correctly.
 
@@ -20,10 +20,10 @@ The audit module is fine underneath; the seam around it is wrong. The seam is wh
 
 | Place | Symptom |
 |---|---|
-| `edgeforge/security/audit_logger.py:6` | `sha256_data(data: str)` over a string — never a path. |
-| `edgeforge/security/audit_logger.py:19-40` | `inputs` arg passed through verbatim, hashed into chain. |
-| `edgeforge/security/audit_logger.py:71-89` | `verify_audit_integrity` rechecks the chain, *not* the artifacts. |
-| `edgeforge/cli/commands/optimize.py:42-49` | Caller passes `{"input": model_path_string}`. |
+| `karyx/security/audit_logger.py:6` | `sha256_data(data: str)` over a string — never a path. |
+| `karyx/security/audit_logger.py:19-40` | `inputs` arg passed through verbatim, hashed into chain. |
+| `karyx/security/audit_logger.py:71-89` | `verify_audit_integrity` rechecks the chain, *not* the artifacts. |
+| `karyx/cli/commands/optimize.py:42-49` | Caller passes `{"input": model_path_string}`. |
 
 ### Deepening decisions
 
@@ -76,7 +76,7 @@ Both with smaller interfaces and one consistent "artifact = bytes-on-disk" conce
 
 ### Why this is second
 
-The Click command `edgeforge/cli/commands/optimize.py` is the only concrete instance of the pipeline. It:
+The Click command `karyx/cli/commands/optimize.py` is the only concrete instance of the pipeline. It:
 - hardcodes `SESSION_123`
 - lazy-imports three other modules inside the function body
 - re-loads the model three times across stages
@@ -89,12 +89,12 @@ Once the audit chain is fixed (Ticket 1), every artifact that flows through the 
 
 | Place | Symptom |
 |---|---|
-| `edgeforge/cli/commands/optimize.py:1-65` | Whole file is the pipeline today. |
-| `edgeforge/workflows/iflow/optimize.yaml` | 7 keys disagree with the code (see architecture report §4). |
+| `karyx/cli/commands/optimize.py:1-65` | Whole file is the pipeline today. |
+| `karyx/workflows/iflow/optimize.yaml` | 7 keys disagree with the code (see architecture report §4). |
 
 ### Deepening decisions
 
-1. **New module.** `edgeforge/pipeline.py` (or `edgeforge/pipelines/optimization.py` if the team anticipates multiple). One interface: `OptimizationPipeline.run(OptimizationRequest) -> ArtifactBundle`. Pure function over inputs and a returned bundle.
+1. **New module.** `karyx/pipeline.py` (or `karyx/pipelines/optimization.py` if the team anticipates multiple). One interface: `OptimizationPipeline.run(OptimizationRequest) -> ArtifactBundle`. Pure function over inputs and a returned bundle.
 
 2. **The CLI is a thin shell.** Click is for arg parsing, log routing, exit codes. No orchestration.
 
@@ -138,7 +138,7 @@ If we then re-create the CLI by writing only arg-parsing code, the original inte
 
 - **Don't refactor + feature together.** Ticket 1 ships alone; Ticket 2 ships alone. Each on its own clean diff.
 - **One commit per acceptance test landing.** Slim commits, easy revert.
-- **No coverage regression.** `pytest --cov=edgeforge` baseline established before Ticket 1 starts.
+- **No coverage regression.** `pytest --cov=karyx` baseline established before Ticket 1 starts.
 
 ## Sequencing
 
@@ -166,14 +166,14 @@ Completed 2026-07-20.
 
 ### What landed
 
-- **`edgeforge/security/audit_logger.py`** — new typed seam.
+- **`karyx/security/audit_logger.py`** — new typed seam.
   - `HashableArtifact` marker base.
   - Three subclasses: `PathRef` (disk file, streamed SHA-256), `RawBytes` (in-memory), `HashedSha256` (already-hashed).
   - `log_transformation` rejects plain strings at the seam with a `TypeError` explaining the right call.
   - The audit logger owns file hashing end-to-end; callers do not import `hashlib`.
   - `verify_audit_integrity(audit_package, input_artifact_map=None)` — when the optional artifact map is supplied, each declared PathRef is re-read from disk and re-hashed. Tampering returns `ARTIFACT_TAMPERING_DETECTED_AT_SEQUENCE_<i>_<name>`.
 
-- **`edgeforge/tests/unit/test_audit_seam.py`** (new) — six tests covering:
+- **`karyx/tests/unit/test_audit_seam.py`** (new) — six tests covering:
   1. plain strings are rejected at the seam,
   2. `PathRef` is streamed and recorded as a 64-hex SHA-256 (not a path),
   3. `RawBytes` are hashed in memory,
@@ -181,13 +181,13 @@ Completed 2026-07-20.
   5. verify passes intact when artifact map matches,
   6. verify detects engine-file tampering via re-read.
 
-- **`edgeforge/tests/unit/test_audit_logger.py`** — migrated to use `HashedSha256(...)` at the seam. The original chaining, tampering-of-entry, and chain-break tests still pass; only the input/output types tightened.
+- **`karyx/tests/unit/test_audit_logger.py`** — migrated to use `HashedSha256(...)` at the seam. The original chaining, tampering-of-entry, and chain-break tests still pass; only the input/output types tightened.
 
-- **`edgeforge/cli/commands/optimize.py`** — passes `PathRef` to the audit seam. Collapsed the audit invocation to a single post-engine step (`optimize_to_engine`) because the old pair of audit entries (one quant step whose reported output path is a phantom under the current quantizer) could no longer chain honestly. This is reshaped properly in Ticket 2.
+- **`karyx/cli/commands/optimize.py`** — passes `PathRef` to the audit seam. Collapsed the audit invocation to a single post-engine step (`optimize_to_engine`) because the old pair of audit entries (one quant step whose reported output path is a phantom under the current quantizer) could no longer chain honestly. This is reshaped properly in Ticket 2.
 
-- **`edgeforge/cli/commands/verify.py`** — extracts the package to a tmpdir, builds an artifact map from `model/` re-staged files, and feeds both into `verify_audit_integrity`. The CLI integration test now exercises the seam-to-seam round-trip.
+- **`karyx/cli/commands/verify.py`** — extracts the package to a tmpdir, builds an artifact map from `model/` re-staged files, and feeds both into `verify_audit_integrity`. The CLI integration test now exercises the seam-to-seam round-trip.
 
-- **`edgeforge/tests/integration/test_pipeline.py`** — migrated to `HashedSha256(...)`.
+- **`karyx/tests/integration/test_pipeline.py`** — migrated to `HashedSha256(...)`.
 
 - **`.gitignore`** — adds `pkg_*/` to suppress air-gap packager cwd-leak residue.
 
@@ -208,19 +208,19 @@ Completed 2026-07-20.
 
 ### What landed
 
-- **`edgeforge/pipeline.py`** (new). One module owns the sequence:
+- **`karyx/pipeline.py`** (new). One module owns the sequence:
   `OptimizationRequest` → `OptimizationPipeline.run()` → `ArtifactBundle`.
   - `OptimizationRequest` is a frozen dataclass with default uuid4 session id; path fields are coerced to `Path`.
   - `ArtifactBundle` is a frozen dataclass with `session_id`, `package_path`, `audit_hash`.
   - `OptimizationPipeline.run()` validates, detects, quantizes, optimizes, audits, packages — in that order. Each stage's audit entry is logged as soon as the artifact materializes on disk. The audit chain sees real hashes.
 
-- **`edgeforge/cli/commands/optimize.py`** rewritten. From 76 non-blank lines to **22**. Imports `OptimizationPipeline` and delegates. The Click decorator remains for arg parsing and `click.echo` for output — that's it.
+- **`karyx/cli/commands/optimize.py`** rewritten. From 76 non-blank lines to **22**. Imports `OptimizationPipeline` and delegates. The Click decorator remains for arg parsing and `click.echo` for output — that's it.
 
-- **`edgeforge/quantization/adaptive_quant.py`** — minimal adapter fix. `apply_quantization_plan` now copies the model bytes to the reported path so the file is real. The upstream module remains a "real quant later" stub but the seam now produces a materialised artifact.
+- **`karyx/quantization/adaptive_quant.py`** — minimal adapter fix. `apply_quantization_plan` now copies the model bytes to the reported path so the file is real. The upstream module remains a "real quant later" stub but the seam now produces a materialised artifact.
 
-- **`edgeforge/workflows/iflow/optimize.yaml`** — rewritten to be a faithful description of `OptimizationPipeline.run`. Single step mapping to `edgeforge.pipeline.OptimizationPipeline.run`. The legacy "SESSION_123" / "IFLOW_SESSION" constant is gone; `session_id` is an optional input propagated to the audit chain. All seven of the keys that disagreed with the code (per the architecture review) are gone.
+- **`karyx/workflows/iflow/optimize.yaml`** — rewritten to be a faithful description of `OptimizationPipeline.run`. Single step mapping to `karyx.pipeline.OptimizationPipeline.run`. The legacy "SESSION_123" / "IFLOW_SESSION" constant is gone; `session_id` is an optional input propagated to the audit chain. All seven of the keys that disagreed with the code (per the architecture review) are gone.
 
-- **`edgeforge/tests/unit/test_pipeline.py`** (new). 7 tests covering:
+- **`karyx/tests/unit/test_pipeline.py`** (new). 7 tests covering:
   1. default session id is a uuid4,
   2. session id is injectable,
   3. `OptimizationPipeline.run` returns an `ArtifactBundle`,
