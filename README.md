@@ -66,10 +66,55 @@ A dashboard script lives at `karyx/cli/dashboard.py` for visualizing a run.
 
 The repo ships iFlow workflow specs at `karyx/workflows/iflow/`. `optimize.yaml` and `deploy.yaml` describe the steps each CLI command should execute. **The YAMLs are aspirational in places** — see the architecture review for the seven keys that currently disagree between spec and code.
 
+## Using Karyx as an MCP server (Hive integration)
+
+Karyx exposes its hardening pipeline as [Model Context Protocol](https://modelcontextprotocol.io/) tools so any MCP-compatible agent (e.g. Hive) can harden and verify edge AI models as a verifiable, auditable tool.
+
+### Tools
+
+| Tool | Description |
+|---|---|
+| `karyx_optimize` | Run the full pipeline (validate → detect → quantize → optimize → audit → package) and return `{package_path, audit_hash, session_id}`. |
+| `karyx_verify` | Extract the audit log from a package tarball and confirm the hash chain is intact. Returns `{valid, operations_verified?, error?}`. |
+| `karyx_deploy` | Stub — returns `{deployed: false}`. |
+
+### Setup
+
+```bash
+pip install -e ".[mcp]"
+```
+
+### Running
+
+```bash
+# Via console script (stdio transport)
+mcp-karyx
+
+# Via module invocation
+python -m mcp_karyx.server
+```
+
+### `.mcp.json`
+
+The repo root ships `.mcp.json` for automatic MCP client discovery:
+
+```json
+{
+  "mcpServers": {
+    "karyx": {
+      "command": "mcp-karyx",
+      "args": [],
+      "env": {}
+    }
+  }
+}
+```
+
 ## Development
 
 ```bash
-pytest            # 12 tests, ~0.2s on a modern laptop
+pytest                              # full suite
+pytest mcp_karyx/tests/ -q          # MCP wrapper tests only
 ```
 
 Tests cover the audit chain, architecture detection, quantization plan selection, packaging, and a CLI smoke test.
