@@ -1,5 +1,7 @@
 # KARYX
 
+![Karyx — Harden. Seal. Prove.](assets/readme-preview.svg)
+
 ```
  _|    _|    _|_|    _|_|_|    _|      _|  _|      _|      _|       _|    _|  _|_|_|_|    _|
  _|  _|    _|    _|  _|    _|    _|  _|      _|  _|        _|_|     _|    _|  _|          _|

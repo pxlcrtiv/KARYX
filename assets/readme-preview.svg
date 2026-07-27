@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="640" viewBox="0 0 880 640" font-family="'JetBrains Mono', ui-monospace, monospace">
+  <defs>
+    <style>
+      .bg { fill: #0F172A; }
+      .card { fill: #1E293B; stroke: #475569; stroke-width: 1; }
+      .grn { fill: #22C55E; }
+      .fg { fill: #F8FAFC; }
+      .mut { fill: #94A3B8; }
+      .ban { fill: #22C55E; font-size: 11px; }
+      .lbl { fill: #22C55E; font-size: 11px; letter-spacing: 3px; }
+      .tag { fill: #F8FAFC; font-size: 26px; font-weight: 700; }
+      .lede { fill: #94A3B8; font-size: 14px; }
+      .h3 { fill: #22C55E; font-size: 14px; }
+      .cp { fill: #94A3B8; font-size: 12px; }
+      .dia { fill: #F8FAFC; font-size: 11px; }
+      .lk { fill: #22C55E; font-size: 12px; text-decoration: underline; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="880" height="640"/>
+
+  <!-- ASCII banner -->
+  <text class="ban" x="28" y="40" xml:space="preserve"> _|    _|    _|_|    _|_|_|    _|      _|  _|      _|      _|       _|    _|  _|_|_|_|    _|</text>
+  <text class="ban" x="28" y="54" xml:space="preserve"> _|  _|    _|    _|  _|    _|    _|  _|      _|  _|        _|_|     _|    _|  _|          _|</text>
+  <text class="ban" x="28" y="68" xml:space="preserve"> _|_|      _|_|_|_|  _|_|_|        _|          _|          _| _|    _|_|_|_|  _|_|_|      _|</text>
+  <text class="ban" x="28" y="82" xml:space="preserve"> _|  _|    _|    _|  _|    _|      _|        _|  _|        _|   _|   _|    _|  _|          _|</text>
+  <text class="ban" x="28" y="96" xml:space="preserve"> _|    _|  _|    _|  _|    _|      _|      _|      _|      _|     _|  _|    _|  _|_|_|_|    _|_|_|_|</text>
+
+  <!-- tagline -->
+  <text class="tag" x="28" y="138">Harden. <tspan class="grn">Seal.</tspan> Prove.</text>
+  <text class="lede" x="28" y="166" xml:space="preserve">Karyx is a military-grade edge-AI model optimization suite: quantize an ONNX</text>
+  <text class="lede" x="28" y="186" xml:space="preserve">model for the target hardware, then ship it air-gapped with a tamper-evident,</text>
+  <text class="lede" x="28" y="206" xml:space="preserve">hash-chained audit log — every transformation cryptographically provable.</text>
+
+  <text class="lk" x="28" y="234">Built by pxlcrtiv · Pairs with Aden's Hive as a verifiable tool over MCP.</text>
+
+  <!-- pipeline label + diagram card -->
+  <text class="lbl" x="28" y="276">PIPELINE</text>
+  <rect class="card" x="28" y="288" width="824" height="96" rx="10"/>
+  <text class="dia" x="48" y="318" xml:space="preserve"> validate ─▶ detect ─▶ quantize ─▶ optimize ─▶ audit ─▶ air-gap package</text>
+  <text class="dia" x="48" y="338" xml:space="preserve">   │          │          │           │          │           │</text>
+  <text class="dia" x="48" y="358" xml:space="preserve">   ▼          ▼          ▼           ▼          ▼           ▼</text>
+  <text class="dia" x="48" y="378" xml:space="preserve"> size&gt;0    Conv/Attn  per-layer   TensorRT/  hash chain  tarball + manifest</text>
+  <text class="dia" x="48" y="378" xml:space="preserve"/>
+
+  <!-- MCP tools label + 3 cards -->
+  <text class="lbl" x="28" y="416">MCP TOOLS</text>
+  <rect class="card" x="28" y="428" width="264" height="120" rx="10"/>
+  <text class="h3" x="48" y="458">karyx_optimize</text>
+  <text class="cp" x="48" y="482" xml:space="preserve">Run the full pipeline. Returns</text>
+  <text class="cp" x="48" y="500" xml:space="preserve">package_path, audit_hash,</text>
+  <text class="cp" x="48" y="518" xml:space="preserve">session_id.</text>
+
+  <rect class="card" x="308" y="428" width="264" height="120" rx="10"/>
+  <text class="h3" x="328" y="458">karyx_verify</text>
+  <text class="cp" x="328" y="482" xml:space="preserve">Confirm the audit hash chain</text>
+  <text class="cp" x="328" y="500" xml:space="preserve">is intact. Returns valid +</text>
+  <text class="cp" x="328" y="518" xml:space="preserve">operations_verified.</text>
+
+  <rect class="card" x="588" y="428" width="264" height="120" rx="10"/>
+  <text class="h3" x="608" y="458">karyx_deploy</text>
+  <text class="cp" x="608" y="482" xml:space="preserve">Stub today — returns</text>
+  <text class="cp" x="608" y="500" xml:space="preserve">deployed: false. The seam</text>
+  <text class="cp" x="608" y="518" xml:space="preserve">is ready.</text>
+
+  <!-- footer -->
+  <line x1="28" y1="584" x2="852" y2="584" stroke="#475569" stroke-width="1"/>
+  <text class="lk" x="28" y="612">Karyx · MIT · authored by pxlcrtiv · MCP integration for Aden's Hive</text>
+</svg>
