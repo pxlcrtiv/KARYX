@@ -99,6 +99,13 @@ class AuditLogger:
         self.chain_hash = hashlib.sha256(
             f"IV_{session_id}".encode()
         ).hexdigest()
+        # License watermark: embedded in every audit session so government
+        # auditors can read accreditation status without a second lookup.
+        # Open-source IL4 runs produce an EVALUATION/UNLICENSED watermark;
+        # only a valid commercial license yields accreditation_ready=True.
+        from karyx.licensing import get_license_manager
+
+        self.license_watermark = get_license_manager().get_watermark()
 
     def log_transformation(
         self,
@@ -143,6 +150,10 @@ class AuditLogger:
         audit_package = {
             "header": {
                 "session_id": self.session_id,
+                "license_watermark": self.license_watermark,
+                "compliance_status": (
+                    "ACCREDITED" if self.license_watermark.get("accreditation_ready") else "NOT_ACCREDITED"
+                ),
                 "start_time": self.log_entries[0]["timestamp"] if self.log_entries else None,
                 "end_time": self.log_entries[-1]["timestamp"] if self.log_entries else None,
                 "total_operations": len(self.log_entries),

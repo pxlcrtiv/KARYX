@@ -156,6 +156,54 @@ class LicenseManager:
         self._cache_until = time.time() + 3600.0
         return result
 
+    def get_watermark(self) -> Dict[str, Any]:
+        """Return license-status metadata embedded in every output artifact.
+
+        This is the audit watermark: it travels inside the audit log and the
+        air-gap package so reviewers can see accreditation status at a glance.
+        It makes NO third-party compliance claims (STIG / FIPS / FedRAMP) — it
+        only reflects whether a valid Karyx commercial license is present.
+        """
+        status = self.validate_license()
+        mode = status["mode"]
+        if mode == "licensed":
+            return {
+                "license_status": "VALID",
+                "license_type": "commercial",
+                "compliance_level": "IL5",
+                "accreditation_ready": True,
+                "auditor_notes": (
+                    "Licensed deployment. Karyx commercial license validated; "
+                    "full hash-chained chain of custody included."
+                ),
+            }
+        if mode == "evaluation":
+            return {
+                "license_status": "EVALUATION",
+                "license_type": "trial",
+                "compliance_level": "IL4",
+                "accreditation_ready": False,
+                "auditor_notes": (
+                    f"EVALUATION MODE: not approved for government production use. "
+                    f"Contact pxlcrtiv@proton.me for a commercial license. "
+                    f"Days remaining: {status['days_remaining']}"
+                ),
+                "evaluation_expiry": status["days_remaining"],
+            }
+        return {
+            "license_status": "UNLICENSED",
+            "license_type": "none",
+            "compliance_level": "NONE",
+            "accreditation_ready": False,
+            "auditor_notes": (
+                "UNLICENSED OUTPUT: produced without a valid Karyx commercial "
+                "license. Not approved for government production use. Obtain a "
+                "license from pxlcrtiv@proton.me. (This notice is informational; "
+                "it asserts no third-party accreditation such as STIG/FIPS/FedRAMP.)"
+            ),
+            "violation_reference": "KARYX-COMMERCIAL-v1.0-SECTION-3",
+        }
+
     def require_license_or_eval(self, feature_name: str) -> Dict[str, Any]:
         """Gate a commercial feature.
 

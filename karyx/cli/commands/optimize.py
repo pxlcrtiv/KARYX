@@ -9,6 +9,25 @@ from karyx.licensing import get_license_manager
 COMMERCIAL_LEVELS = {"IL5", "IL6"}
 
 
+def print_license_banner() -> None:
+    """Print license status at CLI startup (truthful — no third-party claims)."""
+    watermark = get_license_manager().get_watermark()
+    status = watermark["license_status"]
+    if status == "UNLICENSED":
+        click.echo("")
+        click.echo("=" * 60)
+        click.echo("  UNLICENSED KARYX OUTPUT")
+        click.echo("  This package is NOT accredited for government production.")
+        click.echo("  License required: pxlcrtiv@proton.me")
+        click.echo("=" * 60)
+        click.echo("")
+    elif status == "EVALUATION":
+        days = watermark.get("evaluation_expiry", 0)
+        click.echo(f"[*] Evaluation mode: {days} days remaining")
+        click.echo("[*] Purchase license: pxlcrtiv@proton.me")
+        click.echo("")
+
+
 @click.command()
 @click.option("--model", required=True, help="Path to input model (.pt, .onnx)")
 @click.option("--target", help="Target hardware (jetson-nano, jetson-xavier, xilinx-zynq, generic-arm)")
@@ -17,6 +36,8 @@ COMMERCIAL_LEVELS = {"IL5", "IL6"}
 @click.option("--security-level", default="IL4", help="Target security level (IL4, IL5, IL6)")
 def optimize(model, target, precision, calibration_data, security_level):
     """Optimize a model for specified hardware."""
+    print_license_banner()
+
     effective_level = security_level
     if security_level in COMMERCIAL_LEVELS:
         manager = get_license_manager()

@@ -238,6 +238,16 @@ Free 30‑day evaluation; then:
 - Enterprise — $50,000 / year, unlimited
 - OEM / Integration — custom
 
+### Pricing
+
+Full tiers, feature comparison, and FAQ: **https://pxlcrtiv.github.io/KARYX**
+
+Quick reference:
+- Open Source — $0 (MIT, forever)
+- Government Pilot — $5,000 / deployment
+- Enterprise — $50,000 / year, unlimited
+- OEM / Integration — custom
+
 ### Quick license check
 
 ```bash
