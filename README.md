@@ -1,10 +1,60 @@
 # KARYX
 
-Military-grade edge AI model optimization and deployment suite.
+```
+ _|    _|    _|_|    _|_|_|    _|      _|  _|      _|      _|       _|    _|  _|_|_|_|    _|
+ _|  _|    _|    _|  _|    _|    _|  _|      _|  _|        _|_|     _|    _|  _|          _|
+ _|_|      _|_|_|_|  _|_|_|        _|          _|          _| _|    _|_|_|_|  _|_|_|      _|
+ _|  _|    _|    _|  _|    _|      _|        _|  _|        _|   _|   _|    _|  _|          _|
+ _|    _|  _|    _|  _|    _|      _|      _|      _|      _|     _|  _|    _|  _|_|_|_|    _|_|_|_|
+```
 
-`karyx` takes a validated ONNX model, detects its architecture family, quantizes it for a target precision, ships it through an air-gap package, and produces a tamper-evident audit log of every transformation.
+**Harden. Seal. Prove.**
 
-> Status: **milestones 1–4 complete** (engine, security, multi-hardware, workflows, test suite).
+Karyx is a military‑grade edge‑AI model optimization suite. It takes a
+validated ONNX model, detects its architecture, quantizes it for the target
+hardware, and ships it as an **air‑gap package** wrapped in a
+**tamper‑evident, hash‑chained audit log** — so every transformation can be
+cryptographically proven, not just claimed.
+
+> Built by [`pxlcrtiv`](https://github.com/pxlcrtiv) ·
+> Pairs with [Aden's Hive](https://github.com/aden-hive/hive) as a verifiable
+> tool over MCP.
+
+---
+
+## Why Karyx exists
+
+Edge deployment is where good models go to die — or to leak. A quantized
+model pushed to a thousand devices is only as trustworthy as the pipeline
+that produced it. Karyx treats the *artifact* as the unit of accountability:
+every step from validation to packaging is recorded in a hash chain that
+anyone can verify, even on an isolated machine with no network.
+
+The result isn't just a smaller model. It's a model you can **stand behind**.
+
+---
+
+## What it does
+
+```
+ validate ──▶ detect ──▶ quantize ──▶ optimize ──▶ audit ──▶ air-gap package
+   │           │           │            │           │            │
+   ▼           ▼           ▼            ▼           ▼            ▼
+ size>0    Conv/Attn    per-layer   TensorRT/   hash chain   tarball +
+ arch fam   walk        precision    Vitis/ONNX  of every IO  manifest +
+                                                                    signature
+```
+
+| Stage | Module | Responsibility |
+|---|---|---|
+| **validate** | `karyx.core.validator` | Confirms the model exists, is non‑empty, and has a recognized extension. |
+| **detect architecture** | `karyx.core.arch_detector` | Walks the ONNX graph with NetworkX, classifies the model family from Conv / Add / Attention nodes. |
+| **adaptive quantize** | `karyx.quantization.adaptive_quant` | Selects a per‑layer precision from the architecture profile. |
+| **optimize for hardware** | `karyx.hardware.optimizer_factory` | Dispatches to the correct backend for the target. |
+| **audit log** | `karyx.security.audit_logger` | Hash‑chains every input and output into a tamper‑evident journal. |
+| **air‑gap package** | `karyx.packaging.air_gap_packager` | Tarballs the model, runtime, manifest, and audit log into one sealed artifact. |
+
+---
 
 ## Quickstart
 
@@ -14,68 +64,64 @@ cd KARYX
 python3 -m venv .venv
 source .venv/bin/activate
 pip install onnx networkx numpy click PyYAML cryptography pytest
-karyx optimize --help
+
+# harden a model for a Generic ARM target at IL5
+python -m karyx.cli.main optimize --model model.onnx --target generic-arm --security-level IL5
 ```
 
-The CLI entry point is `karyx.cli.main:main` (see `pyproject.toml`'s `[project.scripts]`). It's a tiny Click group with three subcommands.
+The CLI entry point is `karyx.cli.main:main` (see `pyproject.toml`'s
+`[project.scripts]`). It's a small Click group with three subcommands:
+`optimize`, `verify`, `deploy`.
 
-## The pipeline
-
-```
-validate  →  detect_architecture  →  adaptive_quantize  →  optimize_for_hardware  →  audit_log  →  air_gap_package
-```
-
-| Stage | Module | What it does |
-|---|---|---|
-| **validate** | `karyx.core.validator` | Checks the model exists, has size > 0, has a recognized extension. |
-| **detect architecture** | `karyx.core.arch_detector` | Parses the ONNX graph with NetworkX, walks Conv/Add/Attention nodes, classifies the model family. |
-| **adaptive quantize** | `karyx.quantization.adaptive_quant` | Picks a precision per layer based on the arch profile. |
-| **optimize for hardware** | `karyx.hardware.optimizer_factory` | Dispatches to the right backend. |
-| **audit log** | `karyx.security.audit_logger` | Hash-chained journaling of every input and output. |
-| **air-gap package** | `karyx.packaging.air_gap_packager` | Tarballs the model + runtime + manifest + audit log. |
+---
 
 ## Supported targets
 
-| Target string | Backend |
+| Target | Backend |
 |---|---|
-| `jetson-nano`, `jetson-xavier`, `jetson-orin` | `TensorRTOptimizer` (`karyx/hardware/tensorrt_optimizer.py`) |
-| `xilinx-*` (e.g. `xilinx-zynq`) | `VitisAIOptimizer` (`karyx/hardware/vitis_optimizer.py`) |
-| `generic-arm` | `ONNXOptimizer` (`karyx/hardware/onnx_optimizer.py`) |
+| `jetson-nano`, `jetson-xavier`, `jetson-orin` | `TensorRTOptimizer` |
+| `xilinx-*` (e.g. `xilinx-zynq`) | `VitisAIOptimizer` |
+| `generic-arm` | `ONNXOptimizer` |
 
-Routing is done by string-prefix match in `optimize_for_hardware`. Run `auto_detect_hardware()` to inspect the host.
+Routing is a string‑prefix match in `optimize_for_hardware`. Run
+`auto_detect_hardware()` to inspect the host.
 
 ## Security levels
 
-Each optimization run is parameterized with a classification. The audit logger stamps the chain with it. The packager emits a `manifest.json` carrying the classification and the air-gap filename uses the classification suffix (`.il4.tar.gz`, `.il5.tar.gz`, `.il6.tar.gz`).
+Each run carries a classification that the audit logger stamps into the chain.
+The packager writes a `manifest.json` holding the classification, and the
+air‑gap filename carries the suffix — `.il4.tar.gz`, `.il5.tar.gz`,
+`.il6.tar.gz`.
 
 ## CLI
 
-```
-karyx optimize --help
-karyx verify  --help
-karyx deploy  --help
+```bash
+python -m karyx.cli.main optimize --help
+python -m karyx.cli.main verify   --help
+python -m karyx.cli.main deploy   --help
 ```
 
 - `optimize` runs the full pipeline and writes a package to disk.
 - `verify` reads a package's audit log and confirms its chain integrity.
 - `deploy` is a stub today (see `karyx/cli/commands/deploy.py`).
 
-A dashboard script lives at `karyx/cli/dashboard.py` for visualizing a run.
-
-## Workflows
-
-The repo ships iFlow workflow specs at `karyx/workflows/iflow/`. `optimize.yaml` and `deploy.yaml` describe the steps each CLI command should execute. **The YAMLs are aspirational in places** — see the architecture review for the seven keys that currently disagree between spec and code.
+---
 
 ## Using Karyx as an MCP server (Hive integration)
 
-Karyx exposes its hardening pipeline as [Model Context Protocol](https://modelcontextprotocol.io/) tools so any MCP-compatible agent (e.g. Hive) can harden and verify edge AI models as a verifiable, auditable tool.
+Karyx exposes its hardening pipeline as
+[Model Context Protocol](https://modelcontextprotocol.io/) tools, so an
+autonomous agent — like [Aden's Hive](https://github.com/aden-hive/hive) —
+can harden and verify edge‑AI models as a **verifiable, auditable tool**
+rather than an opaque shell command. This is the bridge between Hive's
+adaptive orchestration and Karyx's trustworthy hands.
 
 ### Tools
 
 | Tool | Description |
 |---|---|
-| `karyx_optimize` | Run the full pipeline (validate → detect → quantize → optimize → audit → package) and return `{package_path, audit_hash, session_id}`. |
-| `karyx_verify` | Extract the audit log from a package tarball and confirm the hash chain is intact. Returns `{valid, operations_verified?, error?}`. |
+| `karyx_optimize` | Run the full pipeline and return `{package_path, audit_hash, session_id}`. |
+| `karyx_verify` | Extract the audit log from a package and confirm the hash chain is intact. Returns `{valid, operations_verified?, error?}`. |
 | `karyx_deploy` | Stub — returns `{deployed: false}`. |
 
 ### Setup
@@ -87,11 +133,8 @@ pip install -e ".[mcp]"
 ### Running
 
 ```bash
-# Via console script (stdio transport)
-mcp-karyx
-
-# Via module invocation
-python -m mcp_karyx.server
+mcp-karyx                 # console script (stdio transport)
+python -m mcp_karyx.server  # module invocation
 ```
 
 ### `.mcp.json`
@@ -110,14 +153,18 @@ The repo root ships `.mcp.json` for automatic MCP client discovery:
 }
 ```
 
+---
+
 ## Development
 
 ```bash
-pytest                              # full suite
-pytest mcp_karyx/tests/ -q          # MCP wrapper tests only
+pytest                         # full suite (40 tests)
+pytest mcp_karyx/tests/ -q    # MCP wrapper tests only
 ```
 
-Tests cover the audit chain, architecture detection, quantization plan selection, packaging, and a CLI smoke test.
+Tests cover the audit chain, architecture detection, quantization‑plan
+selection, packaging, the CLI smoke path, and the MCP tool layer (with the
+pipeline mocked so the harness stays fast and honest).
 
 ### Project layout
 
@@ -126,31 +173,35 @@ karyx/
 ├── cli/                 # Click entry points + dashboard
 │   ├── main.py
 │   ├── dashboard.py
-│   └── commands/
-│       ├── optimize.py
-│       ├── verify.py
-│       └── deploy.py
+│   └── commands/        # optimize · verify · deploy
 ├── core/                # validation, arch detection, model loading
 ├── hardware/            # ABC + factory + three backends
 ├── quantization/        # adaptive per-layer precision
 ├── security/            # hash-chained audit logging
 ├── packaging/           # air-gap tarball + manifest
-├── utils/               # cross-cutting helpers
+├── utils/              # cross-cutting helpers
 ├── workflows/iflow/     # YAML workflow specs
-└── tests/
-    ├── unit/
-    ├── integration/
-    └── security/
-
-generate_mock_model.py    # CLI helper to write a fake ONNX model
-pyproject.toml            # build config + entry point
+└── tests/               # unit · integration · security
 ```
 
 ## Conventions
 
-- **Vocabulary.** Module, interface, depth, seam, adapter, leverage, locality — used consistently across plans and reviews.
-- **Deletable tests.** If a test could only "pass against itself", rewrite the production code so the test cannot be a no-op.
-- **No secrets in code.** `.env*` is gitignored; signing keys never live in the repo.
+- **Vocabulary.** Module, interface, depth, seam, adapter, leverage, locality
+  — used consistently across plans and reviews.
+- **Deletable tests.** If a test could only pass against itself, the production
+  code is rewritten so the test cannot be a no‑op.
+- **No secrets in code.** `.env*` is gitignored; signing keys never live in
+  the repo.
+
+---
+
+## Acknowledgements
+
+Karyx is authored and maintained by
+[**pxlcrtiv**](https://github.com/pxlcrtiv). Its MCP integration is designed
+to slot into [Aden's Hive](https://github.com/aden-hive/hive) — the
+multi‑agent production harness — turning model hardening into a tool that
+autonomous agents can call and verify.
 
 ## License
 
