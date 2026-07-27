@@ -1,21 +1,30 @@
-MIT License
+KARYX is licensed under a dual-license (open-core) model.
 
-Copyright (c) 2026 pxlcrtiv
+1. OPEN SOURCE COMPONENTS — MIT License
+   Free for personal, academic, commercial, and redistribution use.
+   Covers:
+     - karyx/core/            (validation, architecture detection, model loading)
+     - karyx/hardware/        (TensorRT / Vitis / ONNX backends + factory)
+     - karyx/quantization/    (adaptive per-layer precision)
+     - basic optimize / verify CLI commands (IL4)
+     - the mcp_karyx/ server  (MCP integration)
+     - all tests
+   Full text: LICENSE-MIT
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+2. COMMERCIAL COMPONENTS — Karyx Commercial License v1.0
+   Requires a valid license key for production / government / defense / enterprise
+   use. Free for evaluation and non-commercial research for 30 days.
+   Covers:
+     - karyx/security/audit_logger.py   (IL5 / IL6 hash-chained audit trails)
+     - karyx/packaging/air_gap_packager.py (air-gap deployment packaging)
+     - karyx/cli/commands/deploy.py     (secure hardware deployment)
+     - karyx/cli/dashboard.py           (monitoring)
+   NO THIRD PARTY MAY SELL, RESELL, OR COMMERCIALLY REDISTRIBUTE THESE COMPONENTS
+   WITHOUT A WRITTEN LICENSE FROM THE COPYRIGHT HOLDER.
+   Full text: LICENSE-COMMERCIAL
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+The IL4 security level of every commercial component stays usable under the
+MIT terms above. IL5 / IL6 triggers a commercial license check (evaluation
+window, then purchase). See docs/open-core-license.md.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+For licensing inquiries: pxlcrtiv@proton.me

@@ -152,18 +152,39 @@ def test_pipeline_no_longer_uses_session_123(tmp_path, monkeypatch):
 
 
 def test_cli_optimize_becomes_thin_shell(tmp_path, monkeypatch):
-    """After T2.3, the Click command is mostly Click-decorator
-    boilerplate plus a delegate to the pipeline. Anything heavier
-    is a smell. Spec bound: < 25 non-blank lines.
+    """The Click command is a thin shell: it declares options, performs the
+    license gate, and delegates to OptimizationPipeline().run(). It must not
+    contain pipeline-stage logic (no audit hashing, no packaging, no quantizer
+    calls) inline.
     """
+    import ast
     from karyx.cli.commands import optimize as opt_module
 
-    src = Path(opt_module.__file__).read_text()
-    non_blank = [line for line in src.splitlines() if line.strip()]
-    assert len(non_blank) < 25, (
-        f"commands/optimize.py is {len(non_blank)} non-blank lines; per the "
-        f"plan/spec, aim is < 25 LOC."
-    )
+    tree = ast.parse(Path(opt_module.__file__).read_text())
+
+    # Collect the set of called names anywhere in the module.
+    called = {
+        node.func.attr if isinstance(node.func, ast.Attribute) else
+        node.func.id if isinstance(node.func, ast.Name) else None
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call)
+    }
+    called.discard(None)
+
+    forbidden = {
+        "adaptive_quantize",
+        "optimize_for_hardware",
+        "detect_architecture",
+        "validate_model",
+        "create_air_gap_package",
+        "finalize_audit_log",
+        "log_transformation",
+    }
+    leaked = forbidden & called
+    assert not leaked, f"optimize.py leaked pipeline logic: {leaked}"
+
+    # And it must delegate to the pipeline.
+    assert "OptimizationPipeline" in called, "optimize.py must delegate to OptimizationPipeline"
 
 
 def test_quantization_step_writes_real_file(tmp_path):

@@ -21,7 +21,10 @@ build/
 dist/
 *.egg-info/
 
-# Test / packager residue: pkg_<uuid>/ dirs the air-gap packager
+# KARYX license files (do not commit real keys)
+.karyx/
+*.key
+!/.karyx-license-example.key
 # creates in cwd. Ticket 4 of the architecture review will harden
 # the packager to clean these up; in the meantime, ignore them.
 pkg_*/

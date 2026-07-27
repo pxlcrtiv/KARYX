@@ -1,0 +1,47 @@
+KARYX COMMERCIAL LICENSE v1.0
+
+Copyright (c) 2026 pxlcrtiv. All rights reserved.
+
+This license governs the COMMERCIAL COMPONENTS of Karyx only. The open-source
+components of Karyx are licensed separately under the MIT License (see
+LICENSE-MIT). By using the COMMERCIAL COMPONENTS you agree to the terms below.
+
+1. DEFINITIONS
+   "Commercial Components" means the software modules in karyx/security/
+   (audit logger, IL5/IL6 classified audit trails), karyx/packaging/
+   (air-gap deployment packaging), karyx/cli/commands/deploy.py (secure
+   hardware deployment), and karyx/cli/dashboard.py.
+   "License Key" means the cryptographic key issued by pxlcrtiv.
+   "Authorized User" means the individual or entity holding a valid License Key
+   or operating within the Evaluation Period below.
+
+2. GRANT OF LICENSE
+   Subject to the restrictions below, pxlcrtiv grants the Authorized User a
+   non-exclusive, non-transferable license to use the Commercial Components for
+   the authorized purpose (evaluation, research, or paid production deployment).
+
+3. EVALUATION LICENSE
+   Unauthorized users may evaluate the Commercial Components free of charge for
+   30 days without a License Key. After 30 days, continued use requires
+   purchase of a paid license.
+
+4. RESTRICTIONS
+   The Authorized User may NOT, without prior written consent from pxlcrtiv:
+   (a) sell, resell, sublicense, lease, or commercially redistribute the
+       Commercial Components, in whole or in part;
+   (b) remove or circumvent any license-verification mechanism;
+   (c) incorporate the Commercial Components into a competing product offered
+       for sale or service without an enterprise license.
+
+5. PRICING (indicative; confirm by email)
+   - Startup / Research: Free on request (email for approval)
+   - Government Pilot:   $5,000 per deployment
+   - Enterprise License: $50,000 / year, unlimited deployments
+   - OEM / Integration:  Custom — contact pxlcrtiv@proton.me
+
+6. TERMINATION
+   This license terminates automatically if a License Key verification fails
+   for 30 consecutive days, or on breach of Section 4. On termination, the
+   Authorized User must cease all use of the Commercial Components.
+
+For licensing: pxlcrtiv@proton.me

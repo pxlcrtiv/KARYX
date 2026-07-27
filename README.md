@@ -207,4 +207,43 @@ autonomous agents can call and verify.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+Karyx is **open core** — dual-licensed so the engine stays free while the
+military-grade security surface is commercial.
+
+### Open Source (MIT) — free forever
+Validated under [LICENSE-MIT](LICENSE-MIT):
+- model validation, architecture detection, quantization
+- hardware optimization (TensorRT, Vitis, ONNX)
+- basic `optimize` / `verify` CLI (IL4)
+- the `mcp-karyx` server (Hive integration)
+- all tests
+
+**Use it for:** personal projects, research, startups, and commercial products.
+
+### Commercial — required for defense / government / enterprise
+Defined in [LICENSE-COMMERCIAL](LICENSE-COMMERCIAL). Covers the hardened
+security components:
+- IL5 / IL6 cryptographic audit trails (`karyx/security/audit_logger.py`)
+- air‑gap deployment packaging (`karyx/packaging/air_gap_packager.py`)
+- secure hardware `deploy` (`karyx/cli/commands/deploy.py`)
+- monitoring dashboard (`karyx/cli/dashboard.py`)
+
+**No third party may sell or commercially redistribute these components**
+without a written license from the copyright holder.
+
+**Use it for:** government, defense, critical infrastructure, enterprise.
+Free 30‑day evaluation; then:
+- Startups / Research — free on request (`pxlcrtiv@proton.me`)
+- Government Pilot — $5,000 per deployment
+- Enterprise — $50,000 / year, unlimited
+- OEM / Integration — custom
+
+### Quick license check
+
+```bash
+python -m karyx.cli.main optimize --model model.onnx --target generic-arm --security-level IL4   # MIT, no key
+python -m karyx.cli.main optimize --model model.onnx --target generic-arm --security-level IL5   # eval / commercial
+export KARYX_LICENSE_KEY="KARYX-XXXX-XXXX-XXXX-XXXX"   # enable commercial features
+```
+
+For licensing inquiries: **pxlcrtiv@proton.me**
