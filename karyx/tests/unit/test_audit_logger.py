@@ -23,10 +23,12 @@ def test_audit_logger_chaining():
     )
 
     package = logger.finalize_audit_log()
-    assert len(package["entries"]) == 2
+    # entries[0] is the prepended license_verification entry; op1/op2 follow.
+    user_entries = [e for e in package["entries"] if e["operation"] in ("op1", "op2")]
+    assert len(user_entries) == 2
     assert (
-        package["entries"][1]["previous_hash"]
-        == package["entries"][0]["entry_hash"]
+        user_entries[1]["previous_hash"]
+        == user_entries[0]["entry_hash"]
     )
 
     v_result = verify_audit_integrity(package)
@@ -40,7 +42,8 @@ def test_audit_logger_tampering():
     )
     package = logger.finalize_audit_log()
 
-    package["entries"][0]["operation"] = "tampered_op"
+    op1 = next(e for e in package["entries"] if e["operation"] == "op1")
+    op1["operation"] = "tampered_op"
 
     v_result = verify_audit_integrity(package)
     assert v_result["valid"] is False
@@ -57,7 +60,8 @@ def test_audit_logger_chain_break():
     )
     package = logger.finalize_audit_log()
 
-    package["entries"][1]["previous_hash"] = "0" * 64
+    op2 = next(e for e in package["entries"] if e["operation"] == "op2")
+    op2["previous_hash"] = "0" * 64
 
     v_result = verify_audit_integrity(package)
     assert v_result["valid"] is False

@@ -104,8 +104,23 @@ class AuditLogger:
         # Open-source IL4 runs produce an EVALUATION/UNLICENSED watermark;
         # only a valid commercial license yields accreditation_ready=True.
         from karyx.licensing import get_license_manager
+        from karyx.security.audit_logger import HashedSha256
 
         self.license_watermark = get_license_manager().get_watermark()
+
+        # Dedicated license-verification entry so auditors see license status
+        # as the FIRST operation in the chain (spec Phase 2). Values are wrapped
+        # in HashedSha256 because the audit seam rejects bare strings.
+        self.log_transformation(
+            operation="license_verification",
+            inputs={"license_check": HashedSha256(hashlib.sha256(b"init").hexdigest())},
+            outputs={"watermark": HashedSha256(
+                hashlib.sha256(
+                    json.dumps(self.license_watermark, sort_keys=True).encode()
+                ).hexdigest()
+            )},
+            metadata={"watermark": True, "critical": True},
+        )
 
     def log_transformation(
         self,

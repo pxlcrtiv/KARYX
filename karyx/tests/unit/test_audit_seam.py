@@ -51,7 +51,9 @@ def test_hashable_artifact_hashes_file_contents(tmp_path):
     )
 
     package = logger.finalize_audit_log()
-    recorded = package["entries"][0]["input_hashes"]["input"]
+    recorded = next(
+        e for e in package["entries"] if e["operation"] == "quantization"
+    )["input_hashes"]["input"]
     assert recorded == expected_hash
     assert recorded != str(model)
 
@@ -68,7 +70,10 @@ def test_hashable_artifact_accepts_raw_bytes():
     )
     package = logger.finalize_audit_log()
     expected = hashlib.sha256(payload).hexdigest()
-    assert package["entries"][0]["input_hashes"]["graph"] == expected
+    rec = next(
+        e for e in package["entries"] if e["operation"] == "optimization"
+    )["input_hashes"]["graph"]
+    assert rec == expected
 
 
 def test_hashable_artifact_already_hashed_kept_verbatim():
@@ -82,13 +87,19 @@ def test_hashable_artifact_already_hashed_kept_verbatim():
         {},
     )
     package = logger.finalize_audit_log()
-    assert package["entries"][0]["input_hashes"]["input"] == h
+    assert next(
+        e for e in package["entries"] if e["operation"] == "x"
+    )["input_hashes"]["input"] == h
 
 
 def test_verify_passes_when_artifacts_intact(tmp_path):
     """verify_audit_integrity re-reads PathRef inputs and confirms
     their hashes still match. Tampering the engine file after a run
     must be detected.
+
+    Note: AuditLogger prepends a `license_verification` entry, so the
+    `optimize` entry is at index 1, not 0. We resolve it by operation
+    to stay robust to watermark entry ordering.
     """
     from karyx.security.audit_logger import verify_audit_integrity
 
@@ -104,12 +115,16 @@ def test_verify_passes_when_artifacts_intact(tmp_path):
     )
     package = logger.finalize_audit_log()
 
+    optimize_seq = next(
+        i for i, e in enumerate(package["entries"]) if e["operation"] == "optimize"
+    )
+
     # Sanity: without an artifact map, verify still passes (legacy
     # behaviour — chain-only).
     assert verify_audit_integrity(package)["valid"] is True
 
     # With the artifact map: re-read the file, hash it, compare.
-    artifact_map = {0: {"model": PathRef(model)}}
+    artifact_map = {optimize_seq: {"model": PathRef(model)}}
     result = verify_audit_integrity(package, artifact_map)
     assert result["valid"] is True
 

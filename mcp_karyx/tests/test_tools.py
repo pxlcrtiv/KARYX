@@ -103,7 +103,8 @@ class TestVerify:
 
         result = wrapper.verify(str(pkg))
         assert result["valid"] is True
-        assert result["operations_verified"] == 1
+        # entries: 1 prepended license_verification + the op1 the test logged
+        assert result["operations_verified"] == 2
 
     def test_returns_valid_false_for_tampered(self, tmp_path):
         from karyx.security.audit_logger import AuditLogger, HashedSha256
@@ -113,8 +114,9 @@ class TestVerify:
         h = lambda s: HashedSha256(hashlib.sha256(s.encode()).hexdigest())
         logger.log_transformation("op1", {"in": h("a")}, {"out": h("b")}, {})
         audit_log = logger.finalize_audit_log()
-        # tamper
-        audit_log["entries"][0]["operation"] = "TAMPERED"
+        # tamper the op1 entry (entries[0] is the prepended license_verification)
+        op1 = next(e for e in audit_log["entries"] if e["operation"] == "op1")
+        op1["operation"] = "TAMPERED"
 
         pkg = tmp_path / "tamper.tar.gz"
         with tarfile.open(str(pkg), "w:gz") as tar:
