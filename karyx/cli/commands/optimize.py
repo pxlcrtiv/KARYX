@@ -18,13 +18,13 @@ def print_license_banner() -> None:
         click.echo("=" * 60)
         click.echo("  UNLICENSED KARYX OUTPUT")
         click.echo("  This package is NOT accredited for government production.")
-        click.echo("  License required: pxlcrtiv@proton.me")
+        click.echo("  License required: vdnhhwvzy7@privaterelay.appleid.com")
         click.echo("=" * 60)
         click.echo("")
     elif status == "EVALUATION":
         days = watermark.get("evaluation_expiry", 0)
         click.echo(f"[*] Evaluation mode: {days} days remaining")
-        click.echo("[*] Purchase license: pxlcrtiv@proton.me")
+        click.echo("[*] Purchase license: vdnhhwvzy7@privaterelay.appleid.com")
         click.echo("")
 
 
