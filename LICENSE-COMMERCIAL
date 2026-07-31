@@ -44,4 +44,17 @@ LICENSE-MIT). By using the COMMERCIAL COMPONENTS you agree to the terms below.
    for 30 consecutive days, or on breach of Section 4. On termination, the
    Authorized User must cease all use of the Commercial Components.
 
+7. AUDIT WATERMARK
+   Every KARYX output artifact embeds a license watermark (in the audit log
+   header, the package manifest, and COMPLIANCE_REPORT.json) recording the
+   license status of the run. The watermark is part of the hash-chained audit
+   log; altering or removing it breaks chain verification (see karyx/security),
+   so an unmodified tool cannot produce a clean artifact from an unlicensed run.
+   Removing or circumventing the license-verification mechanism (Section 4(b))
+   is a breach of this license. Unlicensed output is labeled NOT_ACCREDITED
+   and is not approved for government production use. Nothing in this Section
+   grants Karyx any right to access, audit, or inspect a third party's
+   deliverables; enforcement is limited to the contractual and intellectual-
+   property remedies available under applicable law.
+
 For licensing: pxlcrtiv@proton.me
