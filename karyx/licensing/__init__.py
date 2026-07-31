@@ -141,7 +141,7 @@ class LicenseManager:
                 "days_remaining": remaining,
                 "message": (
                     f"Evaluation mode: {remaining} days remaining. "
-                    f"Purchase a license from vdnhhwvzy7@privaterelay.appleid.com"
+                    f"Purchase a license from 38929261+pxlcrtiv@users.noreply.github.com"
                 ),
             }
         else:
@@ -149,7 +149,7 @@ class LicenseManager:
                 "valid": False,
                 "mode": "expired",
                 "days_remaining": 0,
-                "message": "Evaluation expired. Purchase a license from vdnhhwvzy7@privaterelay.appleid.com",
+                "message": "Evaluation expired. Purchase a license from 38929261+pxlcrtiv@users.noreply.github.com",
             }
 
         self._cache = result
@@ -185,7 +185,7 @@ class LicenseManager:
                 "accreditation_ready": False,
                 "auditor_notes": (
                     f"EVALUATION MODE: not approved for government production use. "
-                    f"Contact vdnhhwvzy7@privaterelay.appleid.com for a commercial license. "
+                    f"Contact 38929261+pxlcrtiv@users.noreply.github.com for a commercial license. "
                     f"Days remaining: {status['days_remaining']}"
                 ),
                 "evaluation_expiry": status["days_remaining"],
@@ -198,7 +198,7 @@ class LicenseManager:
             "auditor_notes": (
                 "UNLICENSED OUTPUT: produced without a valid Karyx commercial "
                 "license. Not approved for government production use. Obtain a "
-                "license from vdnhhwvzy7@privaterelay.appleid.com. (This notice is informational; "
+                "license from 38929261+pxlcrtiv@users.noreply.github.com. (This notice is informational; "
                 "it asserts no third-party accreditation such as STIG/FIPS/FedRAMP.)"
             ),
             "violation_reference": "KARYX-COMMERCIAL-v1.0-SECTION-3",
@@ -215,7 +215,7 @@ class LicenseManager:
             raise LicenseError(
                 f"Feature '{feature_name}' requires a commercial license.\n"
                 f"Status: {status['message']}\n"
-                f"Get a license: vdnhhwvzy7@privaterelay.appleid.com"
+                f"Get a license: 38929261+pxlcrtiv@users.noreply.github.com"
             )
         return status
 

@@ -232,7 +232,7 @@ security components:
 without a written license from the copyright holder.
 
 **Use it for:** government, defense, critical infrastructure, enterprise.
-Free 30‑day evaluation; then purchase a license (`vdnhhwvzy7@privaterelay.appleid.com`).
+Free 30‑day evaluation; then purchase a license (`38929261+pxlcrtiv@users.noreply.github.com`).
 
 Full pricing tiers, feature comparison, and FAQ: **https://pxlcrtiv.github.io/KARYX**
 
@@ -251,4 +251,4 @@ from karyx.licensing import get_license_manager
 print(get_license_manager().validate_license())
 ```
 
-For licensing inquiries: **vdnhhwvzy7@privaterelay.appleid.com**
+For licensing inquiries: **38929261+pxlcrtiv@users.noreply.github.com**

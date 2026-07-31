@@ -36,7 +36,7 @@ security level, including free IL4. Therefore:
    `get_license_manager()`, `check_license()`. Eval tracking written to
    `~/.karyx/.first_use`; first-use path injectable via constructor for tests.
 2. `LICENSE` (dual-license summary), `LICENSE-MIT` (MIT text), `LICENSE-COMMERCIAL`
-   (v1.0, contact `vdnhhwvzy7@privaterelay.appleid.com`).
+   (v1.0, contact `38929261+pxlcrtiv@users.noreply.github.com`).
 3. `optimize.py` — IL5/IL6 license gate + graceful IL4 downgrade.
 4. `deploy.py` — `check_license` at entry.
 5. `README.md` License section — dual-license + pricing.
