@@ -232,21 +232,9 @@ security components:
 without a written license from the copyright holder.
 
 **Use it for:** government, defense, critical infrastructure, enterprise.
-Free 30‑day evaluation; then:
-- Startups / Research — free on request (`pxlcrtiv@proton.me`)
-- Government Pilot — $5,000 per deployment
-- Enterprise — $50,000 / year, unlimited
-- OEM / Integration — custom
+Free 30‑day evaluation; then purchase a license (`pxlcrtiv@proton.me`).
 
-### Pricing
-
-Full tiers, feature comparison, and FAQ: **https://pxlcrtiv.github.io/KARYX**
-
-Quick reference:
-- Open Source — $0 (MIT, forever)
-- Government Pilot — $5,000 / deployment
-- Enterprise — $50,000 / year, unlimited
-- OEM / Integration — custom
+Full pricing tiers, feature comparison, and FAQ: **https://pxlcrtiv.github.io/KARYX**
 
 ### Quick license check
 
