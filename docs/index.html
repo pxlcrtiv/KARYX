@@ -82,6 +82,22 @@
     .footer a { color: var(--sec); text-decoration: none; margin: 0 12px; }
     .footer a:hover { color: var(--cyan); }
     .disclaimer { max-width: 760px; margin: 18px auto 0; font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+    .compare-section { padding: 80px 0; border-top: 1px solid var(--border); }
+    .compare-table { width: 100%; border-collapse: collapse; margin-top: 36px; font-size: 0.9rem; }
+    .compare-table th { text-align: center; padding: 16px 12px; font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid var(--border); }
+    .compare-table th:first-child { text-align: left; width: 34%; }
+    .compare-table td { text-align: center; padding: 14px 12px; border-bottom: 1px solid var(--border); color: var(--sec); }
+    .compare-table td:first-child { text-align: left; color: var(--fg); font-weight: 500; }
+    .compare-table tr:hover td { background: var(--elev); }
+    .compare-table .yes { color: var(--cyan); font-weight: 700; }
+    .compare-table .no { color: var(--muted); }
+    .compare-table .soon { color: var(--amber); }
+    .faq-section { padding: 80px 0; border-top: 1px solid var(--border); }
+    .faq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; margin-top: 40px; }
+    @media (max-width: 768px) { .faq-grid { grid-template-columns: 1fr; } }
+    .faq-item { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 24px; }
+    .faq-item h4 { font-size: 1rem; margin-bottom: 10px; color: var(--fg); }
+    .faq-item p { font-size: 0.88rem; color: var(--sec); line-height: 1.6; }
   </style>
 </head>
 <body>
@@ -210,6 +226,93 @@
         <span class="rtag">FIPS 140-2 module</span>
         <span class="rtag">FedRAMP path</span>
         <span class="rtag">HSM signing</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="compare-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Feature Comparison</h2>
+        <p>What each tier actually ships with today. No surprises at procurement.</p>
+      </div>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Capability</th>
+            <th>Open Source</th>
+            <th>Government Pilot</th>
+            <th>Enterprise</th>
+            <th>OEM / Integration</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Architecture detection</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Adaptive quantization (FP16 / INT8)</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>TensorRT / Vitis / ONNX backends</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Basic CLI (optimize, verify)</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>MCP server (Hive integration)</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Hash-chained audit log</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>IL5-classified output labeling</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Air-gap deployment packaging</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>License watermark + COMPLIANCE_REPORT</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Offline verification (no network)</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Multi-hardware orchestration</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Hive agent integration</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>White-label / API access</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+          <tr><td>STIG validation</td><td class="no">—</td><td class="soon">Roadmap</td><td class="soon">Roadmap</td><td class="soon">Roadmap</td></tr>
+          <tr><td>FIPS 140-2 module</td><td class="no">—</td><td class="soon">Roadmap</td><td class="soon">Roadmap</td><td class="soon">Roadmap</td></tr>
+          <tr><td>FedRAMP path</td><td class="no">—</td><td class="soon">Roadmap</td><td class="soon">Roadmap</td><td class="soon">Roadmap</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="faq-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Frequently Asked Questions</h2>
+        <p>Straight answers for builders and buyers.</p>
+      </div>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Is the open-source core really free?</h4>
+          <p>Yes. The MIT-licensed core — validation, quantization, hardware
+          optimization, basic CLI, and the MCP server — is free forever, for any
+          use including commercial products. No key required.</p>
+        </div>
+        <div class="faq-item">
+          <h4>What does the 30-day evaluation cover?</h4>
+          <p>Every commercial feature: IL5 output labeling, air-gap packaging, the
+          license watermark, and COMPLIANCE_REPORT. After 30 days, IL5-classified
+          runs downgrade to IL4 until a license is purchased. No credit card.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Does "IL5" mean Karyx is government-accredited?</h4>
+          <p>No. "IL5" is an internal classification label the tool applies to your
+          output package. It is not a certification from any government body. Formal
+          accreditation (STIG, FIPS 140-2, FedRAMP) is on our roadmap and not yet
+          independently validated — confirm requirements with your authorizing
+          official before production use.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Can someone resell Karyx?</h4>
+          <p>No. The Commercial License explicitly forbids any third party from
+          selling or commercially redistributing the security components without
+          written permission. The open-source core remains MIT and free.</p>
+        </div>
+        <div class="faq-item">
+          <h4>How is the license enforced?</h4>
+          <p>Commercial features are gated at the CLI. Without a valid key, IL5/IL6
+          requests run as IL4 (open source) and the output package is watermarked
+          NOT_ACCREDITED. The watermark is embedded in the hash-chained audit log,
+          so removing it breaks verification.</p>
+        </div>
+        <div class="faq-item">
+          <h4>How do I get a license or ask more?</h4>
+          <p>Email <span class="email-hl">pxlcrtiv@proton.me</span> — typically a
+          reply within 24 hours. Startup/research licenses are free on request.</p>
+        </div>
       </div>
     </div>
   </section>

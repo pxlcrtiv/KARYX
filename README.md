@@ -256,4 +256,11 @@ python -m karyx.cli.main optimize --model model.onnx --target generic-arm --secu
 export KARYX_LICENSE_KEY="KARYX-XXXX-XXXX-XXXX-XXXX"   # enable commercial features
 ```
 
+Programmatic check:
+
+```python
+from karyx.licensing import get_license_manager
+print(get_license_manager().validate_license())
+```
+
 For licensing inquiries: **pxlcrtiv@proton.me**
