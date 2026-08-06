@@ -234,7 +234,7 @@ without a written license from the copyright holder.
 **Use it for:** government, defense, critical infrastructure, enterprise.
 Free 30‑day evaluation; then purchase a license (`38929261+pxlcrtiv@users.noreply.github.com`).
 
-Full pricing tiers, feature comparison, and FAQ: **https://pxlcrtiv.github.io/KARYX**
+Full pricing tiers, feature comparison, and FAQ are in `docs/index.html` (repo). For licensing and pricing, email **38929261+pxlcrtiv@users.noreply.github.com**.
 
 ### Quick license check
 
